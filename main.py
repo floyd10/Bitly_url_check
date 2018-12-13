@@ -42,6 +42,21 @@ def url_stat(url_hash,url_short,BITLY_ACCESS_TOKEN):
     print('Количество переходов по сокращенной ссылке: ', user_clicks)
     return user_clicks
 
+file = open('file.txt')
+for line in file.readlines():
+    url = str(line)
+    print(url)
+    if not url.startswith('http'):
+        print(line, ' - кривая ссылка')
+        next(line)
+    else:
+        url_short = url_shortner(url,BITLY_ACCESS_TOKEN)[0]
+        url_hash = url_shortner(url,BITLY_ACCESS_TOKEN)[1]
+
+        print('Сокращенная ссылка: ', url_short)
+
+        url_stat(url_hash,url_short,BITLY_ACCESS_TOKEN)
+
 url_short = url_shortner(url,BITLY_ACCESS_TOKEN)[0]
 url_hash = url_shortner(url,BITLY_ACCESS_TOKEN)[1]
 
