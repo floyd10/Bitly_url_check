@@ -48,13 +48,20 @@ if createparser().parse_args().__contains__('l'):
  print('Все ок!')
  try:
      if not url.startswith('http'):
-         print(url, ' - кривая ссылка')
+         if url.startswith('www.'):
+             url = url.replace('www.', 'http://')
+             print('заменили www. на http://')
+             url_short = url_shortner(url, BITLY_ACCESS_TOKEN)
+             print('Сокращенная ссылка: ', url_short)
+             url_stat(url_short, BITLY_ACCESS_TOKEN)
+         else:
+          print(url, ' - кривая ссылка')
      elif url.__contains__('bit.ly'):
          print('Уже bitly-ссылка')
      else:
          url_short = url_shortner(url, BITLY_ACCESS_TOKEN)
          print('Сокращенная ссылка: ', url_short)
-     url_stat(url_short, BITLY_ACCESS_TOKEN)
+         url_stat(url_short, BITLY_ACCESS_TOKEN)
  except Exception():
      print('Что то пошло не так')
 
