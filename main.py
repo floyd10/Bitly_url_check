@@ -1,10 +1,7 @@
-import bitly_api
 import requests
 import json
+import argparse
 
-
-
-#class bitly():
 
 url = 'http://mail.ru'
 BITLY_ACCESS_TOKEN = 'e3f866bffb9af54132642b96a67353cc4f6fc123'
@@ -21,10 +18,9 @@ def url_shortner(url, BITLY_ACCESS_TOKEN):
   data = json.loads(response)['data']
   tag_url = data.get('url')
   tag_hash = data.get('hash')
-  return tag_url, tag_hash
+  return tag_url
 
-
-def url_stat(url_hash,url_short,BITLY_ACCESS_TOKEN):
+def url_stat(url_short,BITLY_ACCESS_TOKEN):
 
     params = {
         'hash': '',
@@ -42,24 +38,27 @@ def url_stat(url_hash,url_short,BITLY_ACCESS_TOKEN):
     print('Количество переходов по сокращенной ссылке: ', user_clicks)
     return user_clicks
 
-file = open('file.txt')
-for line in file.readlines():
-    url = str(line)
-    print(url)
-    if not url.startswith('http'):
-        print(line, ' - кривая ссылка')
-        next(line)
-    else:
-        url_short = url_shortner(url,BITLY_ACCESS_TOKEN)[0]
-        url_hash = url_shortner(url,BITLY_ACCESS_TOKEN)[1]
 
-        print('Сокращенная ссылка: ', url_short)
+def createParser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-l')
+    return parser
 
-        url_stat(url_hash,url_short,BITLY_ACCESS_TOKEN)
 
-url_short = url_shortner(url,BITLY_ACCESS_TOKEN)[0]
-url_hash = url_shortner(url,BITLY_ACCESS_TOKEN)[1]
+if createParser().parse_args().__contains__('l'):
+ print ('Все ок!')
+ try:
+     if not url.startswith('http'):
+         print(url, ' - кривая ссылка')
+     elif url.__contains__('bit.ly'):
+         print('Уже bitly-ссылка')
+     else:
+         url_short = url_shortner(url, BITLY_ACCESS_TOKEN)
+         print('Сокращенная ссылка: ', url_short)
+     url_stat(url_short, BITLY_ACCESS_TOKEN)
+ except Exception():
+     print('Что то пошло не так')
 
-print('Сокращенная ссылка: ', url_short)
+else:
+  print('Не могу распарсить')
 
-url_stat(url_hash,url_short,BITLY_ACCESS_TOKEN)
