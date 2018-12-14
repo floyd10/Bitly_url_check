@@ -4,19 +4,19 @@ import argparse
 
 BITLY_ACCESS_TOKEN = 'e3f866bffb9af54132642b96a67353cc4f6fc123'
 
-
 def url_shortner(url, BITLY_ACCESS_TOKEN):
-    params = {
-        'longUrl': url,
-        'access_token': BITLY_ACCESS_TOKEN
-    }
-    endpoint = 'https://api-ssl.bitly.com/v3/shorten'
-    response = (requests.get(endpoint, params=params)).content
-    # print(response)
-    data = json.loads(response)['data']
-    tag_url = data.get('url')
-    tag_hash = data.get('hash')
-    return tag_url
+
+  params = {
+     'longUrl': url,
+     'access_token': BITLY_ACCESS_TOKEN
+  }
+  endpoint = 'https://api-ssl.bitly.com/v3/shorten'
+  response = (requests.get(endpoint, params=params)).content
+  #print(response)
+  data = json.loads(response)['data']
+  tag_url = data.get('url')
+  tag_hash = data.get('hash')
+  return tag_url
 
 
 def url_stat(url_short, BITLY_ACCESS_TOKEN):
@@ -44,19 +44,26 @@ def createparser():
 
 
 if createparser().parse_args().__contains__('l'):
-    url = createparser().parse_args().l
-    print('Все ок!')
-    try:
-        if not url.startswith('http'):
-            print(url, ' - кривая ссылка')
-        elif url.__contains__('bit.ly'):
-            print('Уже bit.ly-ссылка!')
-        else:
-            url_short = url_shortner(url, BITLY_ACCESS_TOKEN)
-            print('Сокращенная ссылка: ', url_short)
-        url_stat(url_short, BITLY_ACCESS_TOKEN)
-    except Exception(): print('Что то пошло не так')
-
+ url = createparser().parse_args().l
+ print('Все ок!')
+ try:
+     if not url.startswith('http'):
+         if url.startswith('www.'):
+             url = url.replace('www.', 'http://')
+             print('заменили www. на http://')
+             url_short = url_shortner(url, BITLY_ACCESS_TOKEN)
+             print('Сокращенная ссылка: ', url_short)
+             url_stat(url_short, BITLY_ACCESS_TOKEN)
+         else:
+          print(url, ' - кривая ссылка')
+     elif url.__contains__('bit.ly'):
+         print('Уже bitly-ссылка')
+     else:
+         url_short = url_shortner(url, BITLY_ACCESS_TOKEN)
+         print('Сокращенная ссылка: ', url_short)
+         url_stat(url_short, BITLY_ACCESS_TOKEN)
+ except Exception():
+     print('Что то пошло не так')
 
 else:
     print('Не могу распарсить')
